@@ -10,27 +10,32 @@ from constants import *
 class CircuitDataset(Dataset):
     def __init__(self, data):
         """
-        data: (N, 3) simulation data.
+        data: (N, 3) simulation data from read_data()
         """
         self.data = torch.tensor(data, dtype=torch.float32)
 
+        # Convert time to dt.
+        for i in range(self.data.shape[0] - 1):
+            self.data[i, 0] = self.data[i + 1, 0] - self.data[i, 0]
+        self.data[-1, 0] = 0
+
     def __len__(self):
-        return self.data.shape[0] - BPTT + 1
+        return self.data.shape[0] - BPTT
 
     def __getitem__(self, idx):
         """
-        return: (x, y):
-            x: (BPTT,)
-            y: (1,)
+        return: (dt, x, y):
+            dt, x, y: (N,)
         """
         data = self.data[idx : idx + BPTT]
+        dt = data[:, 0]
         x = data[:, 2]
-        y = data[-1, 1]
+        y = data[:, 1]
 
-        return x, y
+        return dt, x, y
 
 
-def read_data(file):
+def read_data(file, data_step):
     """
     Read LTSpice simulation data.
 
@@ -47,11 +52,12 @@ def read_data(file):
             data.append(parts)
 
     data = np.array(data)
+    data = data[::DATA_STEP]
     return data
 
 
 if __name__ == "__main__":
-    data = read_data("SimData.txt")
+    data = read_data("SimData.txt", 1)
     print(data.shape)
 
     t = data[:, 0]

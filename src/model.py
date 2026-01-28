@@ -36,7 +36,7 @@ class CircuitRNN(nn.Module):
         """
         Implements the "f" function.
         """
-        return -1 / TAU * x + self.tanh(self.f_final(self.f_x(x) + self.f_h(h)))
+        return -1 / TAU * x + self.f_final(self.tanh(self.f_x(x) + self.f_h(h)))
 
     def forward(self, dt, x):
         """
@@ -59,7 +59,7 @@ class CircuitRNN(nn.Module):
             y[:, i] = self.g(h).squeeze(-1)
 
             # Apply h'
-            h += h_prime * dt[:, i]
+            h = h + h_prime * dt[:, i].unsqueeze(-1)
 
         return y
 
