@@ -31,17 +31,9 @@ def train(args):
     model = CircuitRNN().to(DEVICE)
     model.init_weights()
 
-    data = read_data(args.data, DATA_STEP)
+    data = read_data(args.data)
     dataset = CircuitDataset(data)
-    train_len = int(0.8 * len(dataset))
-    train_data, val_data = random_split(dataset, [train_len, len(dataset) - train_len])
-    loader_args = {
-        "batch_size": BATCH_SIZE,
-        "shuffle": True,
-        "num_workers": 4,
-    }
-    train_loader = DataLoader(train_data, **loader_args)
-    val_loader = DataLoader(val_data, **loader_args)
+    data_loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
 
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
@@ -51,21 +43,15 @@ def train(args):
     global_step = 0
 
     for epoch in range(EPOCHS):
-        for loss in forward_dataset(model, train_loader, criterion, f"Train epoch {epoch}"):
+        dataset.set_progress(epoch / EPOCHS)
+
+        for loss in forward_dataset(model, data_loader, criterion, f"Train epoch {epoch}"):
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
 
             writer.add_scalar("Loss/Train", loss.item(), global_step)
             global_step += 1
-
-        with torch.no_grad():
-            total_loss = 0
-            for loss in forward_dataset(model, val_loader, criterion, f"Val epoch {epoch}"):
-                total_loss += loss.item()
-            avg_loss = total_loss / len(val_loader)
-
-            writer.add_scalar("Loss/Val", avg_loss, global_step)
 
         writer.add_scalar("LR", scheduler.get_last_lr()[0], global_step)
         scheduler.step()

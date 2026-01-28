@@ -29,11 +29,13 @@ def main():
     model.g.weight[:] = 1
     """
 
-    data = read_data(args.data, DATA_STEP)
+    data = read_data(args.data)
+    data = data[::2]
 
-    dt = data[:, 0]
-    x = data[:, 2]
-    y = data[:, 3]
+    t = data[:, 0]
+    x = data[:, 1]
+    y = data[:, 2]
+    dt = np.diff(t, prepend=t[0:1])
     pred = model(
         torch.tensor(dt, device=DEVICE).unsqueeze(0),
         torch.tensor(x, device=DEVICE).unsqueeze(0)

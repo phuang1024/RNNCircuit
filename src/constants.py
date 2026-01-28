@@ -7,12 +7,11 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 INNER_SIZE = 16
 HIDDEN_SIZE = 32
 
-# This is implemented as the N dimension of the input to the RNN.
-#BPTT = 100
+# Has nothing to do with sequence length. See Dataset.
+DATASET_LENGTH = 1000
+MIN_LENGTH = 10
+
 BATCH_SIZE = 16
-EPOCHS = 100
+EPOCHS = 30
 LR = 1e-2
 LR_DECAY = 5e-2 ** (1 / EPOCHS)
-
-# Every nth sample.
-DATA_STEP = 3
