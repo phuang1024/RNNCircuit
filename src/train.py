@@ -29,7 +29,7 @@ def forward_dataset(model, loader, criterion, desc=""):
 def train():
     model = CircuitRNN().to(DEVICE)
 
-    data = read_data("SimData.txt", DATA_STEP)
+    data = read_data("VoltageDiv.txt", DATA_STEP)
     dataset = CircuitDataset(data)
     train_len = int(0.8 * len(dataset))
     train_data, val_data = random_split(dataset, [train_len, len(dataset) - train_len])

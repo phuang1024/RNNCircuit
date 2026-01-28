@@ -22,8 +22,11 @@ def main():
 
     model = CircuitRNN()
     model.load_state_dict(torch.load(args.model, map_location="cpu"))
-
-    print(model.f_final.weight, model.f_final.bias)
+    """
+    model.f_x.weight[:] = 1
+    model.f_final.weight[:] = 5
+    model.g.weight[:] = 1
+    """
 
     data = read_data(args.data, DATA_STEP)
 

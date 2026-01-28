@@ -10,7 +10,7 @@ from constants import *
 class CircuitDataset(Dataset):
     def __init__(self, data):
         """
-        data: (N, 3) simulation data from read_data()
+        data: (N, 4) simulation data from read_data()
         """
         self.data = torch.tensor(data)
 
@@ -29,7 +29,7 @@ class CircuitDataset(Dataset):
         data = self.data[:self.data.shape[0] // 2]
         dt = data[:, 0]
         x = data[:, 2]
-        y = data[:, 1]
+        y = data[:, 3]
 
         return dt, x, y
 
@@ -38,8 +38,8 @@ def read_data(file, data_step):
     """
     Read LTSpice simulation data.
 
-    return: (N, 3) numpy array.
-        Second dimension is (dt, output, input).
+    return: (dt, t, input, output).
+        np array shape (N, 4) dtype float32.
     """
     data = []
     with open(file, "r") as fp:
@@ -53,18 +53,20 @@ def read_data(file, data_step):
     data = np.array(data, dtype=np.float32)
     data = data[::data_step]
 
-    # Convert time to dt.
+    # Compute dt.
+    dt = np.zeros([data.shape[0], 1], dtype=np.float32)
     for i in range(data.shape[0] - 1):
-        data[i, 0] = data[i + 1, 0] - data[i, 0]
-    data[-1, 0] = 0
+        dt[i] = data[i + 1, 0] - data[i, 0]
+
+    data = np.concatenate([dt, data], axis=1)
 
     return data
 
 
 if __name__ == "__main__":
-    data = read_data("SimData.txt", 1)
+    data = read_data("VoltageDiv.txt", 1)
     print(data.shape)
 
-    t = data[:, 0]
+    t = data[:, 1]
     plt.plot(t)
     plt.show()
