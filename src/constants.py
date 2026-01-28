@@ -9,11 +9,11 @@ HIDDEN_SIZE = 32
 TAU = 2
 
 # This is implemented as the N dimension of the input to the RNN.
-BPTT = 100
+#BPTT = 100
 BATCH_SIZE = 32
+EPOCHS = 10
 LR = 1e-2
-LR_DECAY = 0.92
-EPOCHS = 100
+LR_DECAY = 1e-3 ** (1 / EPOCHS)
 
 # Every nth sample.
-DATA_STEP = 3
+#DATA_STEP = 3

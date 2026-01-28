@@ -15,7 +15,7 @@ class CircuitDataset(Dataset):
         self.data = torch.tensor(data)
 
     def __len__(self):
-        return self.data.shape[0] - BPTT
+        return self.data.shape[0]# - BPTT
 
     def __getitem__(self, idx):
         """
@@ -26,7 +26,7 @@ class CircuitDataset(Dataset):
         # Using all samples requires figuring out h(0) to satisfy initial cond.
 
         #data = self.data[idx : idx + BPTT]
-        data = self.data[:self.data.shape[0] // 2]
+        data = self.data[:self.data.shape[0] // 4]
         dt = data[:, 0]
         x = data[:, 2]
         y = data[:, 3]

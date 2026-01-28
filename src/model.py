@@ -25,16 +25,8 @@ class CircuitRNN(nn.Module):
         self.tanh = nn.Tanh()
 
         # Layers for "f" function.
-        self.f_x = nn.Sequential(
-            nn.Linear(1, INNER_SIZE),
-            nn.LeakyReLU(),
-            nn.Linear(INNER_SIZE, INNER_SIZE),
-        )
-        self.f_h = nn.Sequential(
-            nn.Linear(HIDDEN_SIZE, INNER_SIZE),
-            nn.LeakyReLU(),
-            nn.Linear(INNER_SIZE, INNER_SIZE),
-        )
+        self.f_x = nn.Linear(1, INNER_SIZE)
+        self.f_h = nn.Linear(HIDDEN_SIZE, INNER_SIZE)
         self.f_final = nn.Linear(INNER_SIZE, HIDDEN_SIZE)
 
         # Layers for the "g" function.
@@ -75,6 +67,16 @@ class CircuitRNN(nn.Module):
             #print("step", i, "h mean", h.mean().item(), "y mean", y[:, i].mean().item())
 
         return y
+
+    def init_weights(self):
+        """
+        Initialize weights of the model.
+        """
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.xavier_uniform_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
 
 
 if __name__ == "__main__":
