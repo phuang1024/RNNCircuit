@@ -36,7 +36,10 @@ class CircuitRNN(nn.Module):
         """
         Implements the "f" function.
         """
-        return -1 / TAU * x + self.f_final(self.tanh(self.f_x(x) + self.f_h(h)))
+        f_in = self.f_x(x) + self.f_h(h)
+        f_in = self.tanh(f_in)
+        f_out = self.f_final(f_in)
+        return -1 / TAU * x + f_out
 
     def forward(self, dt, x):
         """

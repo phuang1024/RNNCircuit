@@ -32,7 +32,7 @@ def main():
 
     dt = data[:, 0]
     x = data[:, 2]
-    y = data[:, 1]
+    y = data[:, 3]
     pred = model(torch.tensor(dt).unsqueeze(0), torch.tensor(x).unsqueeze(0))
     pred = pred.squeeze(0).numpy()
 

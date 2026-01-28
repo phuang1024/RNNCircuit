@@ -6,7 +6,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Hidden size is the output of that network, which produces the hidden state.
 INNER_SIZE = 64
 HIDDEN_SIZE = 64
-TAU = 100
+TAU = 2
 
 # This is implemented as the N dimension of the input to the RNN.
 BPTT = 100
