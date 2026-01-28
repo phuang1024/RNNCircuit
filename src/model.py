@@ -48,9 +48,9 @@ class CircuitRNN(nn.Module):
         B, N = dt.shape
 
         # Initialize hidden state to 1.
-        h = torch.ones([B, HIDDEN_SIZE])
+        h = torch.ones([B, HIDDEN_SIZE], device=DEVICE)
         # Output tensor.
-        y = torch.zeros([B, N])
+        y = torch.zeros([B, N], device=DEVICE)
         for i in range(dt.shape[1]):
             # Take current index of input.
             xi = x[:, i].unsqueeze(-1)

@@ -43,6 +43,7 @@ def train():
 
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=LR_DECAY)
 
     writer = SummaryWriter()
     global_step = 0
@@ -62,7 +63,10 @@ def train():
                 total_loss += loss.item()
             avg_loss = total_loss / len(val_loader)
 
-            writer.add_scalar("Loss/Val", avg_loss, epoch)
+            writer.add_scalar("Loss/Val", avg_loss, global_step)
+
+        writer.add_scalar("LR", scheduler.get_last_lr()[0], global_step)
+        scheduler.step()
 
         torch.save(model.state_dict(), "latest.pt")
 

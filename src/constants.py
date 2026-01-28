@@ -12,6 +12,7 @@ TAU = 100
 BPTT = 100
 BATCH_SIZE = 32
 LR = 1e-2
+LR_DECAY = 0.92
 EPOCHS = 100
 
 # Every nth sample.
