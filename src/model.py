@@ -22,7 +22,9 @@ class CircuitRNN(nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.tanh = nn.Tanh()
+        self.tau = nn.Parameter(torch.tensor(2.0))
+
+        self.relu = nn.LeakyReLU()
 
         # Layers for "f" function.
         self.f_x = nn.Linear(1, INNER_SIZE)
@@ -37,9 +39,9 @@ class CircuitRNN(nn.Module):
         Implements the "f" function.
         """
         f_in = self.f_x(x) + self.f_h(h)
-        f_in = self.tanh(f_in)
+        f_in = self.relu(f_in)
         f_out = self.f_final(f_in)
-        return -1 / TAU * x + f_out
+        return -1 / self.tau * h + f_out
 
     def forward(self, dt, x):
         """

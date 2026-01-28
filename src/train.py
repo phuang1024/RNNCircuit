@@ -30,7 +30,7 @@ def train():
     model = CircuitRNN().to(DEVICE)
     model.init_weights()
 
-    data = read_data("RC.txt", 1)#DATA_STEP)
+    data = read_data("RC.txt", DATA_STEP)
     dataset = CircuitDataset(data)
     train_len = int(0.8 * len(dataset))
     train_data, val_data = random_split(dataset, [train_len, len(dataset) - train_len])
