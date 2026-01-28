@@ -1,1 +1,7 @@
 __pycache__
+
+*.pt
+*.png
+
+logs
+sims

@@ -3,6 +3,7 @@ Test the NN on a ground truth signal.
 """
 
 import argparse
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,7 +18,7 @@ from model import CircuitRNN
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("model")
-    parser.add_argument("data")
+    parser.add_argument("data", type=Path)
     args = parser.parse_args()
 
     model = CircuitRNN().to(DEVICE)
@@ -51,8 +52,9 @@ def main():
     plt.xlabel("Time")
     plt.ylabel("Signal")
     plt.legend()
+    plt.title(args.data.stem)
     #plt.show()
-    plt.savefig("test.png")
+    plt.savefig(f"{args.data.stem}.png")
 
 
 if __name__ == "__main__":

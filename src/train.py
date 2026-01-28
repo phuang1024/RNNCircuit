@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 from tqdm import tqdm
 
@@ -26,11 +27,11 @@ def forward_dataset(model, loader, criterion, desc=""):
         yield loss
 
 
-def train():
+def train(args):
     model = CircuitRNN().to(DEVICE)
     model.init_weights()
 
-    data = read_data("RC.txt", DATA_STEP)
+    data = read_data(args.data, DATA_STEP)
     dataset = CircuitDataset(data)
     train_len = int(0.8 * len(dataset))
     train_data, val_data = random_split(dataset, [train_len, len(dataset) - train_len])
@@ -46,7 +47,7 @@ def train():
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=LR_DECAY)
 
-    writer = SummaryWriter()
+    writer = SummaryWriter(f"logs/{args.data.stem}")
     global_step = 0
 
     for epoch in range(EPOCHS):
@@ -69,11 +70,15 @@ def train():
         writer.add_scalar("LR", scheduler.get_last_lr()[0], global_step)
         scheduler.step()
 
-        torch.save(model.state_dict(), "latest.pt")
+        torch.save(model.state_dict(), f"{args.data.stem}.pt")
 
 
 def main():
-    train()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("data", type=Path)
+    args = parser.parse_args()
+
+    train(args)
 
 
 if __name__ == "__main__":
