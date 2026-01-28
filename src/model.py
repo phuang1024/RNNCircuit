@@ -47,8 +47,8 @@ class CircuitRNN(nn.Module):
         """
         B, N = dt.shape
 
-        # Initialize hidden state to 0.
-        h = torch.zeros([B, HIDDEN_SIZE])
+        # Initialize hidden state to 1.
+        h = torch.ones([B, HIDDEN_SIZE])
         # Output tensor.
         y = torch.zeros([B, N])
         for i in range(dt.shape[1]):
@@ -60,6 +60,8 @@ class CircuitRNN(nn.Module):
 
             # Apply h'
             h = h + h_prime * dt[:, i].unsqueeze(-1)
+
+            #print("step", i, "h mean", h.mean().item(), "y mean", y[:, i].mean().item())
 
         return y
 

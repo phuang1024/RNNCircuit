@@ -4,6 +4,7 @@ from tqdm import tqdm
 
 import torch
 from torch.utils.data import DataLoader, random_split
+from torch.utils.tensorboard import SummaryWriter
 
 from constants import *
 from data import CircuitDataset, read_data
@@ -43,16 +44,27 @@ def train():
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
+    writer = SummaryWriter()
+    global_step = 0
+
     for epoch in range(EPOCHS):
         for loss in forward_dataset(model, train_loader, criterion, f"Train epoch {epoch}"):
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
 
+            writer.add_scalar("Loss/Train", loss.item(), global_step)
+            global_step += 1
+
         with torch.no_grad():
             total_loss = 0
             for loss in forward_dataset(model, val_loader, criterion, f"Val epoch {epoch}"):
                 total_loss += loss.item()
+            avg_loss = total_loss / len(val_loader)
+
+            writer.add_scalar("Loss/Val", avg_loss, epoch)
+
+        torch.save(model.state_dict(), "latest.pt")
 
 
 def main():

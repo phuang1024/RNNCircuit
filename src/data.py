@@ -12,12 +12,7 @@ class CircuitDataset(Dataset):
         """
         data: (N, 3) simulation data from read_data()
         """
-        self.data = torch.tensor(data, dtype=torch.float32)
-
-        # Convert time to dt.
-        for i in range(self.data.shape[0] - 1):
-            self.data[i, 0] = self.data[i + 1, 0] - self.data[i, 0]
-        self.data[-1, 0] = 0
+        self.data = torch.tensor(data)
 
     def __len__(self):
         return self.data.shape[0] - BPTT
@@ -27,7 +22,11 @@ class CircuitDataset(Dataset):
         return: (dt, x, y):
             dt, x, y: (N,)
         """
-        data = self.data[idx : idx + BPTT]
+        # TODO: Testing with using only the first sample.
+        # Using all samples requires figuring out h(0) to satisfy initial cond.
+
+        #data = self.data[idx : idx + BPTT]
+        data = self.data[:self.data.shape[0] // 2]
         dt = data[:, 0]
         x = data[:, 2]
         y = data[:, 1]
@@ -40,7 +39,7 @@ def read_data(file, data_step):
     Read LTSpice simulation data.
 
     return: (N, 3) numpy array.
-        Second dimension is (time, output, input).
+        Second dimension is (dt, output, input).
     """
     data = []
     with open(file, "r") as fp:
@@ -51,8 +50,14 @@ def read_data(file, data_step):
             parts = list(map(float, parts))
             data.append(parts)
 
-    data = np.array(data)
-    data = data[::DATA_STEP]
+    data = np.array(data, dtype=np.float32)
+    data = data[::data_step]
+
+    # Convert time to dt.
+    for i in range(data.shape[0] - 1):
+        data[i, 0] = data[i + 1, 0] - data[i, 0]
+    data[-1, 0] = 0
+
     return data
 
 

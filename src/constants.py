@@ -11,7 +11,7 @@ TAU = 100
 # This is implemented as the N dimension of the input to the RNN.
 BPTT = 100
 BATCH_SIZE = 32
-LR = 1e-3
+LR = 1e-2
 EPOCHS = 100
 
 # Every nth sample.
