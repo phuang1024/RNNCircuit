@@ -98,15 +98,20 @@ if __name__ == "__main__":
     """
 
     dataset = CircuitDataset(data)
-    dataset.set_progress(0.5)
 
     # Plot samples
-    dt, x, y = dataset[0]
-    t = torch.cumsum(dt, dim=0)
+    plt.figure(figsize=(12, 4))
+    for i in range(4):
+        dataset.set_progress(0.1 + 0.2 * i)
+        dt, x, y = dataset[0]
+        t = torch.cumsum(dt, dim=0)
 
-    plt.plot(t.numpy(), x.numpy(), label="Input")
-    plt.plot(t.numpy(), y.numpy(), label="Output")
-    plt.legend()
+        plt.subplot(2, 2, i + 1)
+        plt.plot(t.numpy(), x.numpy(), label="Input")
+        plt.plot(t.numpy(), y.numpy(), label="Output")
+        if i == 0:
+            plt.legend()
+
     plt.tight_layout()
     #plt.show()
     plt.savefig("dataSample.png")
