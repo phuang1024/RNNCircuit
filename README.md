@@ -1,1 +1,3 @@
-# RNN Circuit
+## An exploration of RNN behavior model of circuits
+
+Paper: https://github.com/phuang1024/RNNCircuit/blob/master/results/paper.pdf

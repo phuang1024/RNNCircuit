@@ -31,6 +31,10 @@ def train(args):
     model = CircuitRNN().to(DEVICE)
     model.init_weights()
 
+    print(model)
+    num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"Number of trainable parameters: {num_params}")
+
     data = read_data(args.data)
     dataset = CircuitDataset(data)
     data_loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
